@@ -1,8 +1,7 @@
-# Predominant Group Feature Selection Algorithm
+# Predominant Group Varaible Neighbourhood Selection Algorithm
 
+Usage
 ```
-Usage:
-
 from PGVNS_functions import PGVNS
 p = PGVNS()
 data=p.iris_discrete
