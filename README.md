@@ -4,11 +4,16 @@ Usage
 ```
 from PGVNS_functions import PGVNS
 p = PGVNS()
+
+# Discrete dataset
 data=p.iris_discrete
 labels = p.iris_labels
 p.new(data,labels,threshold=0,kMax=100)
-
 Result = p.VNS(shakeNumber=10)
+
+# Continuous dataset
+data = p.loadWineDataset()
+labels = p.loadWineLabels()
 ```
 
 **Reference**
