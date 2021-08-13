@@ -1,4 +1,4 @@
-# Predominant Group Varaible Neighbourhood Selection Algorithm
+# Predominant Group Variable Neighbourhood Search Algorithm
 
 Usage
 ```
