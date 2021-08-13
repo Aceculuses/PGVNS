@@ -30,6 +30,28 @@ class PGVNS:
 		   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 		   2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
 
+#----------Load Datasets---------------------------------
+    def loadWineDataset(self):
+        datasets = []
+        file = open('/Users/guoping/Documents/PhD/Research/Algorithm/PGVNS/wine.txt','r').readlines()
+        for i in file:
+            j = i.rstrip('\n').split(',')
+            for n in range(len(j)):
+                j[n] = float(j[n])
+            datasets.append(j)
+        file.close()
+        return datasets
+
+    def loadWineLabels(self):
+        labels = []
+        file = open('/Users/guoping/Documents/PhD/Research/Algorithm/PGVNS/wineLabels.txt','r').readlines()
+        for i in file:
+            j = i.rstrip(',\n').split(',')
+            for m in range(len(j)):
+                j[m] = int(j[m])
+                labels.append(j[m])
+        return labels
+        
 #----------FCBFOverlappingBagSearch Parameters-----------
     tdata= ''
     dvalues = ''
@@ -88,8 +110,11 @@ class PGVNS:
         return False
 
 #----------Discretion Methods-----------------------------
-    def discretizeViaFayyad(self):
-        
+    def discretizeViaFayyad(self,dataset):
+        pass
+
+
+
 
 #----------StatUtils--------------------------------------
     def symmetricalUncertainty(self, ctable):
