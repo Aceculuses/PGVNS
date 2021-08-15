@@ -114,6 +114,7 @@ class PGVNS:
         self.numClass = labels[self.maxValueIndex(labels)] + 1 
         tdata = self.transpose(data)
         cutPoints = [ '' for f in range(len(tdata)) ]
+        # print(cutPoints)
         for findex in range(len(tdata)):
             sindices = self.sort(tdata[findex])
             sfeatures = [ '' for f in range(len(sindices)) ]
@@ -128,9 +129,10 @@ class PGVNS:
                 cutPoints[findex] = [float('Inf')]
         self.model = cutPoints
         self.cutPoints = cutPoints
-        return self.model
+        #return self.model
 
     def calculateCutPoints(self,svalues,labels,first,last):
+        #print('Self-calling')
         numCutPoints = 0
         pcounts = [ 0 for f in range(self.numClass)]
         for p in range(first,last):
@@ -139,7 +141,7 @@ class PGVNS:
         ccounts = [ ['' for i in range(self.numClass)] for j in range(2) ]
         bcounts = [ ['' for i in range(self.numClass)] for j in range(2) ]
         ccounts[0] = [ 0 for i in range(self.numClass) ]
-        ccounts[1] = pcounts
+        ccounts[1] = copy.deepcopy(pcounts)
         #
         pentropy = self.entropy(pcounts)
         bentropy = pentropy
@@ -153,25 +155,55 @@ class PGVNS:
         #
         if last - first >= 2:
             for i in range(first,last-1):
+
                 ccounts[0][labels[i]] = ccounts[0][labels[i]] + 1
                 ccounts[1][labels[i]] = ccounts[1][labels[i]] - 1
+
+                #print('Round',i,'pcounts:',pcounts)
+                #print('Round',i,'ccounts:',ccounts)
+
                 if svalues[i] < svalues[i+1]:
                     cpoint = (svalues[i] + svalues[i+1]) / 2
+
+                    #print('Round',i, 'cpoint:',cpoint)
+
                     centropy = self.entropyConditionedOnRows(ccounts)
+
+                    #print('Round',i, 'centropy:',centropy)
+                    #print('Round',i,'betropy:',bentropy)
+                    #print('Round',i,'centropy < bentropy:',centropy < bentropy)
+
                     if centropy < bentropy:
                         bcpoint = cpoint
                         bentropy = centropy
                         bestIndex = i
                         bcounts[0][0:self.numClass] = ccounts[0][0:self.numClass]
                         bcounts[1][0:self.numClass] = ccounts[1][0:self.numClass] 
+
+                        #print('Round',i,'bcpoint:',bcpoint)
+                        #print('Round',i,'bentropy:',bentropy)
+                        #print('Round',i,'besIndex:',i)
+                        #print('Round',i,'bcounts:',bcounts)
+                        #print('Round',i,'bestIndex:',bestIndex,'\n')
+
+                    #else:
+                        #print('Round',i,'centropy < bentropy:',centropy < bentropy,'\n')
+
                     numCutPoints += 1
+                    #print('Round',i,'numCutPoints:',numCutPoints,'\n')
             right = []
             gain = pentropy - bentropy
+
+            #print('IG:',gain)
+            #C = gain > 0 and self.splitTest(pcounts,bcounts,numInstances,numCutPoints)
+            #print('Controller:',C)
+            #print('*********************Original Input Above**************************\n')
+
             if gain > 0 and self.splitTest(pcounts,bcounts,numInstances,numCutPoints):
                 left = self.calculateCutPoints(svalues,labels,first,bestIndex+1)
                 ritgh = self.calculateCutPoints(svalues,labels,bestIndex+1,last)
                 if left == [] and ritgh == []:
-                    cpoints = []
+                    cpoints = ['']
                     cpoints[0] = bcpoint
                 elif right == []:
                     cpoints = [ '' for f in range(len(left)+1)]
@@ -209,8 +241,10 @@ class PGVNS:
         #
         entropyLeft = self.entropy(bestCounts[0])
         entropyRight = self.entropy(bestCounts[1])
-        delta = self.log2(math.pow(3,numClassTotal) - 2) - numClassTotal * priorEntropy - numClassRight * entropyRight - numClassLeft * entropyLeft
-        return gain > (self.log2(numCutPoints) + delta) / numInstances
+        delta = math.log(math.pow(3,numClassTotal) - 2,2) - numClassTotal * priorEntropy - numClassRight * entropyRight - numClassLeft * entropyLeft
+        #print('Delt:',(math.log(numCutPoints,2) + delta) / numInstances)
+        #print('Gain:',gain)
+        return gain > (math.log(numCutPoints,2) + delta) / numInstances
 
     def discretize(self,iarray):
         oarray = [ '' for i in range(len(iarray))]
@@ -223,10 +257,12 @@ class PGVNS:
         return oarray
 
     def discretizeViaFayyad(self,dataset,labels):
+        self.buildDiscretizationModel(dataset,labels)
         points = dataset
         ddata =[ '' for f in range(len(points))]
         for r in range(len(points)):
             ddata[r] = self.discretize(points[r])
+        return ddata
 
 #----------StatUtils--------------------------------------
     def symmetricalUncertainty(self, ctable):
@@ -296,9 +332,9 @@ class PGVNS:
             value = x*math.log(x,2)
         return value
 
-    def log2(self,x):
-        y = float(1.4426950408889634) * math.log(x,2)
-        return y
+#    def log2(self,x):
+#        y = float(1.4426950408889634) * math.log(x,2)
+#        return y
 
     def eq(self,a,b):
         if a-b < 1e-06 and b-a < 1e-06:
@@ -315,8 +351,20 @@ class PGVNS:
         if self.eq(sum,0):
             Hx = 0
         else:
-            Hx = (-1 / sum) * (entropy - self.xlogx(sum))
+            Hx = (-1 / sum) * (entropy - self.xlogx(sum)) 
         return Hx
+
+    #def entropy2(self,histgram):
+    #    entropy = 0
+    #    sum = 0
+    #    for i in range(len(histgram)):
+    #        entropy -= self.xlogx(histgram[i])
+    #        sum += histgram[i]
+    #    if self.eq(sum,0):
+    #        entropy = 0
+    #    else:
+    #        entropy = ( entropy + self.xlogx(sum)) / sum * float(0.6931471805599453)
+    #    return entropy
 
     def entropyConditionedOnRows(self,ctable):
         entropyConditionedOnRows = 0
@@ -332,6 +380,20 @@ class PGVNS:
         # Hx_y = ( -1/total) * (entropyConditionedOnRows - rowEntropy)
         Hx_y = (-1 / total) * (entropyConditionedOnRows - rowEntropy)
         return Hx_y
+
+    #def entropyConditionedOnRows2(self,ctable):
+    #    returnValue = 0
+    #    total = 0
+    #    for i in range(len(ctable)):
+    #        sumForRow = 0
+    #        for j in range(len(ctable[0])):
+    #            returnValue = self.xlogx(ctable[i][j])
+    #            total += sumForRow
+    #        returnValue += -self.xlogx(sumForRow)
+    #        total = sumForRow
+    #    if self.eq(total,0):
+    #        return 0
+    #    return -returnValue / total * float(0.6931471805599453)
 
 #----------FCBFOverlappingBagSearch Constructor-----------
     def setData(self,A):
