@@ -1,6 +1,6 @@
 # Predominant Group Variable Neighbourhood Search Algorithm
 
-Usage
+**Usage**
 ```
 from PGVNS_functions import PGVNS
 p = PGVNS()
