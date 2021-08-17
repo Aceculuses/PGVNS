@@ -576,36 +576,31 @@ class PGVNS:
         return bestSolution
 
 #----------Greedy Forward Selection (Sequential Forward Search)-------
-    def SFSearch(self,shakedSolution,k):
-        nfeatures = len(shakedSolution)
-        bestSolution = []
-        bestSolution.append(shakedSolution[0])
-        solution = []
-        solution.append(shakedSolution[0])
-        Js = 0
-        Jx = 0
-        stop = False
-        count = 1
-        #
-        #print('SFS Start:',k)
-        #while stop == False and count < k:
-        while count < k:
-            #print('SFS count:',count)     
-            for i in range(1, nfeatures):
-                solution.append(shakedSolution[i])
+    def SFSearch(self,shakedSolution):
+        X = shakedSolution
+        bestScore = 0
+        currentScore = 0
+        C = []
+        J = []
+        S = []
+        Sx = []
 
-                # predominant = solution.search()
-                #  
-                Js = self.CfsEvaluator(bestSolution)
-                Jx = self.CfsEvaluator(solution)
-                if Jx > Js:
-                    Js = Jx 
-                    bestSolution = solution
-                    count += 1
-                else:
-                    count += 1
-                    stop = True
-        return bestSolution
+        for i in range(0,len(X)):
+            C.append(X[i])
+            Js = self.CfsEvaluator(C)
+            J.append(Js)
+            Jmax = max(J)
+            #
+            Xj = X[J.index(Jmax)]
+            #
+            if Xj not in Sx: 
+                Sx.append(Xj)
+                if len(Sx) > 1:
+                    currentScore = self.CfsEvaluator(Sx)
+                    if currentScore > bestScore:
+                        S = copy.deepcopy(Sx)
+                        bestScore = currentScore
+        return S
 
 #----------Correlation Based Feature Selection Evaluation Function------
     def correlation(self,idx):
@@ -726,17 +721,23 @@ class PGVNS:
             shakedSolution = self.shakeSolution(bestSolution,shakeNumber)
             bestScore = self.CfsEvaluator(bestSolution)
             #print('CheckPoint shakeSolution', k)
+
+            #print('shakedSolution:',shakedSolution)
+            
             if len(shakedSolution) < 1:
                 k += 1
             else:
                 #print('CheckPoint SFS:',k)
-                localSolution = self.SFSearch(shakedSolution,len(localSolution))
-
+                #localSolution = self.SFSearch(shakedSolution,len(localSolution))
+                
+                localSolution = self.SFSearch(shakedSolution)
                 #print('CheckPoint Compare:',k)
                 if len(localSolution) < 1:
                     k += 1
                 else:
                     localScore = self.CfsEvaluator(localSolution)
+                    #print('bestScore',bestScore)
+                    #print('localScore',localScore)
                     if localScore > bestScore:
                         bestSolution = localSolution
                         bestScore = localScore
