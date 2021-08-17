@@ -717,27 +717,23 @@ class PGVNS:
         localSolution = []
         currentSolution = []
         while k <= self.kMax:
-            #print('Iteration:',k)
             shakedSolution = self.shakeSolution(bestSolution,shakeNumber)
             bestScore = self.CfsEvaluator(bestSolution)
-            #print('CheckPoint shakeSolution', k)
 
             #print('shakedSolution:',shakedSolution)
             
             if len(shakedSolution) < 1:
                 k += 1
             else:
-                #print('CheckPoint SFS:',k)
-                #localSolution = self.SFSearch(shakedSolution,len(localSolution))
-                
                 localSolution = self.SFSearch(shakedSolution)
-                #print('CheckPoint Compare:',k)
+                #print('localSolution:',localSolution,'\n')
+
                 if len(localSolution) < 1:
                     k += 1
                 else:
                     localScore = self.CfsEvaluator(localSolution)
                     #print('bestScore',bestScore)
-                    #print('localScore',localScore)
+                    #print('localScore',localScore,'\n')
                     if localScore > bestScore:
                         bestSolution = localSolution
                         bestScore = localScore
