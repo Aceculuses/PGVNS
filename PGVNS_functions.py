@@ -51,6 +51,33 @@ class PGVNS:
                 labels.append(j[m])
         return labels
 
+    def loadIrisDataset(self):
+        file = open('/Users/guoping/Documents/PhD/Research/Algorithm/PGVNS/iris_continuous_features.txt','r').readlines()
+        datasets = []
+        for i in file:
+            j = i.rstrip('\n').split(',')
+            for n in range(len(j)):
+                j[n] = float(j[n])
+            datasets.append(j)
+        return datasets
+
+    def loadIrisLabels(self):
+        labels = []
+        k = []
+        d ={}
+        count = 0
+        file = open('/Users/guoping/Documents/PhD/Research/Algorithm/PGVNS/iris_continuous_labels.txt','r').readlines()
+        for i in file:
+            x = i.rstrip('\n')
+            if x not in k:
+                k.append(x)
+                d[x] = count
+                count += 1
+                labels.append(d[x])
+            else:
+                labels.append(d[x])
+        return labels
+
 #----------FCBFOverlappingBagSearch Parameters-----------
     tdata= ''
     dvalues = ''
@@ -64,6 +91,7 @@ class PGVNS:
     numFeatures = ''
     numClass = ''
     cutPoints = ''
+    predominantIndex = []
 #----------MaxtrixUtil-----------------------------------  
     def transpose(self,A):
         m = len(A)
@@ -544,6 +572,7 @@ class PGVNS:
             index1 -= 1
             att1 = isuc[index1]   
         self.MarkovBlanket = self.MarkovBlanket[0:nPreds]
+        self.predominantIndex = predominant
         return bestSolution
 
 #----------Greedy Forward Selection (Sequential Forward Search)-------
@@ -564,6 +593,9 @@ class PGVNS:
             #print('SFS count:',count)     
             for i in range(1, nfeatures):
                 solution.append(shakedSolution[i])
+
+                # predominant = solution.search()
+                #  
                 Js = self.CfsEvaluator(bestSolution)
                 Jx = self.CfsEvaluator(solution)
                 if Jx > Js:
@@ -634,28 +666,53 @@ class PGVNS:
         return solution
 
     def shakeSolution(self,currentSolution,shakeNumber):
-        pfeatures = currentSolution
-        #print(pfeatures)
-        nfeatures = self.numFeatures
-        stop = False
-        for k in range(shakeNumber):
-            pk = random.randint(0,nfeatures)
-            if pk < len(pfeatures):
-                rfeature = pfeatures.pop(pk)
-                fblanket = self.featureCluster[rfeature]
-                if len(fblanket) > 0:
-                    pk = random.randint(0,len(fblanket)-1)
-                    if list(fblanket)[pk] not in pfeatures:
-                        pfeatures.append(list(fblanket)[pk])
-            else:
-                while stop == False and len(pfeatures) < nfeatures:
-                    pk = random.randint(0,nfeatures-1)
-                    if pk not in pfeatures:
-                        pfeatures.append(pk)
-                        stop = True
-        shakedSolution = pfeatures
-        return shakedSolution
+        # featureIdx = [0,1,2,3] 
+        # The index of features is equal to the  position of index
+        # featureIdx = [0,1,2,3]
+        #        idx :  0 1 2 3
+        # for i in range(tnfeature):
+        #      print(i)
+        # i = 0,1,2,3
+        S = copy.deepcopy(currentSolution)
+        Sx= copy.deepcopy(currentSolution)
+        G = []
+        F = []
+        
+        s = len(currentSolution)
+        # d can be whatever a integer.
+        # d = len(tdata)
+        d = len(self.tdata)
 
+        # Loop times = shake number
+        for k in range(shakeNumber):
+            j = random.randint(0,d)
+            if j < len(Sx):
+
+                # Once Xj is popped out of S, then S becomes S'
+                # Xj is added to a new list G 
+                Xj = Sx.pop(j)
+                G.append(Xj)
+
+                # F contains all features in G except Xj
+                F = G
+                F.pop(F.index(Xj))
+
+                #
+                if len(F) > 0:
+                    k = random.randint(0,len(F)-1)
+                    Xk = F[k]
+                    if Sx.count(Xk) == 0:
+                        Sx.appen(Xk)
+            else:
+                stop = False
+                while stop == False and len(Sx) < s:
+                    r = random.randint(0,s - 1)
+                    Xr = S[r]
+                    if Sx.count(Xr) == 0:
+                        Sx.append(Xr)
+                        stop = True
+        return Sx
+ 
 #----------Main Function-------------------------------------------
     def VNS(self,shakeNumber):
         bestSolution = self.generateInitialSolution()
