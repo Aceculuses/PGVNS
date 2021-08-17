@@ -14,10 +14,11 @@ Result = p.VNS(shakeNumber=10)
 # Continuous dataset
 data = p.loadWineDataset()
 labels = p.loadWineLabels()
-
 ddata = p.discretizeViaFayyad(data,labels)
 p.new(ddata,labels,threshold=0,kMax=100)
 Results = p.VNS(shakeNumber=10)
+
+data = 
 ```
 
 **Reference**
