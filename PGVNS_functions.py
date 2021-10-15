@@ -299,6 +299,7 @@ class PGVNS:
         columnEntropy = 0
         rowEntropy = 0
         entropyConditionedOnRows = 0
+        eachEntropyConditionedOnRows = 0
         infoGain = 0
         
         # Math 
@@ -319,14 +320,16 @@ class PGVNS:
         # H(Y) and H(X|Y)
         for i in range(len(ctable)):
             sumForRow = 0
+            entropyConditionedOnRows = 0
             for j in range(len(ctable[0])):
                 sumForRow += ctable[i][j]
                 entropyConditionedOnRows += self.xlogx(ctable[i][j])
+                eachEntropyConditionedOnRows += entropyConditionedOnRows - self.xlogx(sumForRow)
             rowEntropy += self.xlogx(sumForRow)
             rtotal += sumForRow
-        # Hx_y = ( -1/rtotal) * (entropyConditionedOnRows - rowEntropy)
+        # Hx_y = ( -1/rtotal) * (eachEntropyConditionedOnRows - rowEntropy)
         # Hy = ( -1/rtotal) * (rowEntropy - self.xlogx(rtotal))
-        Hx_y = entropyConditionedOnRows - rowEntropy
+        Hx_y = eachEntropyConditionedOnRows - rowEntropy
         Hy = rowEntropy - self.xlogx(rtotal)
 
         # IG(X|Y) = H(X) - H(X|Y)
@@ -359,10 +362,6 @@ class PGVNS:
         if x > 0:
             value = x*math.log(x,2)
         return value
-
-#    def log2(self,x):
-#        y = float(1.4426950408889634) * math.log(x,2)
-#        return y
 
     def eq(self,a,b):
         if a-b < 1e-06 and b-a < 1e-06:
