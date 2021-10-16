@@ -1,5 +1,5 @@
 
-# ctable <- matrix(sample(seq_len(100),70), nrow = 10, ncol = 7)
+ctable <- matrix(sample(seq_len(2000000),1672000), nrow = 2000, ncol = 836)
 
 symmetricalUncertainty <- function(ctable){
 
@@ -7,19 +7,17 @@ symmetricalUncertainty <- function(ctable){
   # Marginal Entropy H(X)
   sumForColumn <- apply(ctable,2,sum)
   columnEntropy <-  sum(sapply(sumForColumn,xlogx))
-  ctotal <-  sum(sumForColumn)
-  Hx <-  columnEntropy - xlogx(ctotal)
+  total <-  sum(sumForColumn)
+  Hx <-  columnEntropy - xlogx(total)
   
   # H(Y) = (-1/Sum) * [ sum(Yi * log2(Yi)) - rowSum * log2(rowSum) ]
   # Marginal Entropy H(Y)
   sumForRow <- apply(ctable,1,sum)
   rowEntropy <-  sum(sapply(sumForRow,xlogx))
-  rtotal <-  sum(sumForRow)
-  Hy <- rowEntropy - xlogx(rtotal)
+  Hy <- rowEntropy - xlogx(total)
   
-  # H(X|Y) = (-1/Sum) * sum.i[sum.j(Xij * log2(Xij)) - rowSum.i * log2(rowSum.i)]   
-  # i: row
-  # j: column
+  # H(X|Y) = H(XY) - H(Y)
+  # H(X|Y) = xlogx(Xij) - H(Y)
   # Conditional Entropy H(X|Y)
   eachEntropyConditionedOnRows <- apply(ctable,1,
                                     function(w){
