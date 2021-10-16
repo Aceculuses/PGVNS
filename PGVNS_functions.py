@@ -320,16 +320,14 @@ class PGVNS:
         # H(Y) and H(X|Y)
         for i in range(len(ctable)):
             sumForRow = 0
-            entropyConditionedOnRows = 0
             for j in range(len(ctable[0])):
                 sumForRow += ctable[i][j]
                 entropyConditionedOnRows += self.xlogx(ctable[i][j])
-                eachEntropyConditionedOnRows += entropyConditionedOnRows - self.xlogx(sumForRow)
             rowEntropy += self.xlogx(sumForRow)
             rtotal += sumForRow
-        # Hx_y = ( -1/rtotal) * (eachEntropyConditionedOnRows - rowEntropy)
+        # Hx_y = ( -1/rtotal) * (entropyConditionedOnRows - rowEntropy)
         # Hy = ( -1/rtotal) * (rowEntropy - self.xlogx(rtotal))
-        Hx_y = eachEntropyConditionedOnRows - rowEntropy
+        Hx_y = entropyConditionedOnRows - rowEntropy
         Hy = rowEntropy - self.xlogx(rtotal)
 
         # IG(X|Y) = H(X) - H(X|Y)
