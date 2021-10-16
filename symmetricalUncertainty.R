@@ -1,5 +1,5 @@
 
-ctable <- matrix(sample(seq_len(2000000),1672000), nrow = 2000, ncol = 836)
+ctable <- matrix(sample(seq_len(100),70), nrow = 10, ncol = 7)
 
 symmetricalUncertainty <- function(ctable){
 
@@ -19,12 +19,8 @@ symmetricalUncertainty <- function(ctable){
   # H(X|Y) = H(XY) - H(Y)
   # H(X|Y) = xlogx(Xij) - H(Y)
   # Conditional Entropy H(X|Y)
-  eachEntropyConditionedOnRows <- apply(ctable,1,
-                                    function(w){
-                                      rowSum <- sum(w)
-                                      sum(sapply(w, xlogx)) - rowSum * xlogx(rowSum) 
-                                    })
-  Hx_y <- sum(eachEntropyConditionedOnRows)
+  EntropyConditionedOnRows <- sapply(ctable, xlogx)
+  Hx_y <- sum(EntropyConditionedOnRows)
   
   # IG(X|Y) = H(X) - H(X|Y)
   infoGain <-  Hx - Hx_y
