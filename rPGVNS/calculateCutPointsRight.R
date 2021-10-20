@@ -1,5 +1,7 @@
 calculateCutPointsRight <- function(sfeatures,slabels,numClass,first,last){
   
+  stop <- first
+  
   pcounts <- matrix(0,nrow = 1, ncol = numClass)
   for(p in seq(first,last)){
     pcounts[1,slabels[p]+1] <- pcounts[1,slabels[p]+1]+1
@@ -43,8 +45,10 @@ calculateCutPointsRight <- function(sfeatures,slabels,numClass,first,last){
     right <- c()
     left <- c()
     gain <- pentropy - bentropy
+    
+    stop <- stop - 1
  
-    if(gain > 0 & splitTest(pcounts,bcounts,numInstances,numCutPoints)){
+    if(gain > 0 & splitTest(pcounts,bcounts,numInstances,numCutPoints) & bestIndex > stop){
       
       right <-  calculateCutPointsRight(sfeatures,slabels,numClass,bestIndex+1,last)
       
