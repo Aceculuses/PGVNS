@@ -43,8 +43,7 @@ calculateCutPointsRight <- function(sfeatures,slabels,numClass,first,last){
     right <- c()
     left <- c()
     gain <- pentropy - bentropy
-    
-    print(paste0('bestIndex: ',bestIndex))
+ 
     if(gain > 0 & splitTest(pcounts,bcounts,numInstances,numCutPoints)){
       
       right <-  calculateCutPointsRight(sfeatures,slabels,numClass,bestIndex+1,last)
