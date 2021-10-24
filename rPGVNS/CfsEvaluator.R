@@ -29,7 +29,7 @@ CfsEvaluator <- function(bestSolution,tddata,dv,label,dl){
   corr.matrix[lower.tri(corr.matrix)] <- 1
   bestSolution <- sort(bestSolution,decreasing = TRUE)
   
-  if(length(bestSolution) > 0){
+  if(length(bestSolution) > 1){
     for(i in seq_len(corr.dim)){
       d <- corr.matrix[i,corr.dim]
       if( d == 0 ){
