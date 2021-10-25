@@ -16,12 +16,15 @@ VNS <- function(ddata,label,shakeNumber,kMax){
                  sort(unique(tddata[w,]))
                })
   
+  print('Generate Initial Solution')
   bestSolution <- search(tddata,dv,label,dl,nfeature)
+  print('Initial Solution Generated')
   # print(bestSolution)
   k <- 0
   bestScore <- 0
   localScore <- 0
   
+  print('Optimizing')
   Best <- pbapply::pbsapply(kMax,function(K){
     while(k <= K){
       # print(K)
@@ -51,7 +54,7 @@ VNS <- function(ddata,label,shakeNumber,kMax){
     }
     return(bestSolution)
   })
-  
+  print('Done!')
   # BestSol <- Best[[length(Best)]]
   # return(BestSol)
   return(Best)
