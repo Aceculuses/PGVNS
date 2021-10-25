@@ -17,7 +17,7 @@ VNS <- function(ddata,label,shakeNumber,kMax){
                })
   
   bestSolution <- search(tddata,dv,label,dl,nfeature)
-  print(bestSolution)
+  # print(bestSolution)
   k <- 0
   bestScore <- 0
   localScore <- 0
@@ -33,7 +33,7 @@ VNS <- function(ddata,label,shakeNumber,kMax){
         k <- k +1
       }else{
         localSolution <- SFSearch(shakedSolution,tddata,dv,label,dl)
-        print(localSolution)
+        # print(localSolution)
         
         if(length(localSolution) < 1){
           k <- k +1
