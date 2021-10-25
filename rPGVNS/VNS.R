@@ -5,6 +5,8 @@
 # shakeNumber <- 10
 # kMax <- 50
 
+# V <- VNS(ddata,label,shakeNumber,100)
+
 VNS <- function(ddata,label,shakeNumber,kMax){
   tddata <- t(ddata)
   nfeature <- nrow(tddata)
@@ -15,20 +17,23 @@ VNS <- function(ddata,label,shakeNumber,kMax){
                })
   
   bestSolution <- search(tddata,dv,label,dl,nfeature)
-  
+  print(bestSolution)
   k <- 0
   bestScore <- 0
   localScore <- 0
   
-  Best <- pbapply::pblapply(kMax,function(K){
+  Best <- pbapply::pbsapply(kMax,function(K){
     while(k <= K){
+      # print(K)
       shakedSolution <- shakeSolution(bestSolution,nfeature,shakeNumber)
+      # print(shakedSolution)
       bestScore <- CfsEvaluator(bestSolution,tddata,dv,label,dl)
       
       if(length(shakeSolution) < 1){
         k <- k +1
       }else{
         localSolution <- SFSearch(shakedSolution,tddata,dv,label,dl)
+        print(localSolution)
         
         if(length(localSolution) < 1){
           k <- k +1
@@ -43,11 +48,11 @@ VNS <- function(ddata,label,shakeNumber,kMax){
           }
         }
       }
-      
-      return(bestSolution)
-      }
+    }
+    return(bestSolution)
   })
   
-  BestSol <- Best[[length(Best)]]
-  return(BestSol)
+  # BestSol <- Best[[length(Best)]]
+  # return(BestSol)
+  return(Best)
 }

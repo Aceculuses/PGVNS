@@ -1,7 +1,7 @@
 # nfeature <- nrow(tddata)
 # shakeNumber <- 10
-# s1 <- search(ddata,label)
-# s2 <- shakeSolution(s1,nfeature,shakeNumber)
+# s1 <- search(tddata,dv,label,dl,nfeature)
+# shakeSolution(s1,nfeature,shakeNumber)
 
 shakeSolution <- function(currentSolution,nfeature,shakeNumber){
   S <- Sx <- currentSolution

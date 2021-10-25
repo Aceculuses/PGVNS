@@ -9,11 +9,7 @@
 # dv <- lapply(seq_len(nfeature), function(w){sort(unique(tddata[w,]))})
 # #
 # bestSolution <- search(tddata,dv,label,dl,nfeature)
-# shakeNumber <- 10
-# shakeSolution <- shakeSolution(bestSolution,nfeature,shakeNumber)
-# #
 # bestScore <- CfsEvaluator(bestSolution,tddata,dv,label,dl)
-
 
 CfsEvaluator <- function(bestSolution,tddata,dv,label,dl){
   num <- 0
