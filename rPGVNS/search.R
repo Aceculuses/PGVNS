@@ -23,17 +23,14 @@ contingencyTable <- function(features,dv,label,dl){
   return(ctable)
 }
 
-search <- function(ddata,label){
-  tddata <- t(ddata)
-  nfeature <- nrow(tddata)
-  dl <- sort(unique(label))
-  
-  #
-  dv <- lapply(seq_len(nfeature), 
-               function(w){
-                 sort(unique(tddata[w,]))
-               }
-              )
+search <- function(tddata,dv,label,dl,nfeature){
+  # tddata <- t(ddata)
+  # nfeature <- nrow(tddata)
+  # dl <- sort(unique(label))
+  # dv <- lapply(seq_len(nfeature), 
+  #              function(w){
+  #                sort(unique(tddata[w,]))
+  #              })
   
   # SU(X1,Y), Su(X2,Y), SU(X3,Y)......Su(Xn,Y)
   suc <- sapply(seq_len(nfeature), 
@@ -42,7 +39,7 @@ search <- function(ddata,label){
                   sucx <- symmetricalUncertainty(ctable)
                   return(sucx)
                 }
-              )
+  )
   # 
   isuc <- order(suc)
   index1 <- nfeature
@@ -100,6 +97,7 @@ search <- function(ddata,label){
     if(index1 == 0) break
     att1 <- isuc[index1]
   }
+  
+  # Return the index of features
   return(bestSolution)
 }
-
