@@ -40,6 +40,9 @@ search <- function(tddata,dv,label,dl,nfeature){
                   return(sucx)
                 }
   )
+  
+  na <- which(is.na(suc))
+  suc[na] <- 0
   # 
   isuc <- order(suc)
   index1 <- nfeature
@@ -59,6 +62,7 @@ search <- function(tddata,dv,label,dl,nfeature){
   # Counting the number of predominant features
   nPreds <- 0
   bestSolution <- c()
+  
   while(index1 >= 1 & suc[att1] > threshold){
     
     #****************************************
@@ -78,6 +82,7 @@ search <- function(tddata,dv,label,dl,nfeature){
           ctable <- contingencyTable(tddata[att1,],dv[[att1]],tddata[att2,],dv[[att2]])
           sux <- symmetricalUncertainty(ctable)
           
+          if(is.na(sux)) sux <- 0 
           # Whether att2 is in Markov Blanket of att1.
           # sux = SU(att1,att2), SU(att2,class)
           # if SU(att1,att2) > SU(att2,class)
