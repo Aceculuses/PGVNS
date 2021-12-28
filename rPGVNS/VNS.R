@@ -8,6 +8,8 @@
 # V <- VNS(ddata,label,shakeNumber,100)
 
 VNS <- function(ddata,label,shakeNumber,kMax){
+  shakeNumber <- shakeNumber
+  kMax <- kMax
   tddata <- t(ddata)
   nfeature <- nrow(tddata)
   dl <- sort(unique(label))
@@ -16,27 +18,25 @@ VNS <- function(ddata,label,shakeNumber,kMax){
                  sort(unique(tddata[w,]))
                })
   
-  print('Generate Initial Solution')
-  bestSolution <- search(tddata,dv,label,dl,nfeature)
-  print('Initial Solution Generated')
-  # print(bestSolution)
+  message('Generate initial solution')
+  O <- search2(tddata,dv,label,dl,nfeature)
+  bestSolution <- rownames(O$predominant_group)
+  
   k <- 0
   bestScore <- 0
   localScore <- 0
   
-  print('Optimizing')
-  Best <- pbapply::pbsapply(kMax,function(K){
-    while(k <= K){
-      # print(K)
+  
+  message('Combinatorial optimization and global optimization with variable neighborhood search')
+    while(k <= kMax){
+      message('    Iteration ',k)
       shakedSolution <- shakeSolution(bestSolution,nfeature,shakeNumber)
-      # print(shakedSolution)
       bestScore <- CfsEvaluator(bestSolution,tddata,dv,label,dl)
       
       if(length(shakeSolution) < 1){
         k <- k +1
       }else{
         localSolution <- SFSearch(shakedSolution,tddata,dv,label,dl)
-        # print(localSolution)
         
         if(length(localSolution) < 1){
           k <- k +1
@@ -52,10 +52,9 @@ VNS <- function(ddata,label,shakeNumber,kMax){
         }
       }
     }
-    return(bestSolution)
-  })
-  print('Done!')
-  # BestSol <- Best[[length(Best)]]
-  # return(BestSol)
-  return(Best)
+  
+  message('---SUCCESS---\n')
+  
+  Out <- list('initial_solution' = O, 'best_solution' = bestSolution)
+  return(Out)
 }

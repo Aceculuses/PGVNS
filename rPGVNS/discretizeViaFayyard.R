@@ -44,11 +44,11 @@ buildDiscretizationModel <- function(data,label){
 
 discretizeViaFayyadModel <- function(data,label){
   
-  print('Build Discretization Model')
+  message('Build Discretization Model')
   model <- buildDiscretizationModel(data,label)
   tdata <- t(data)
   
-  print('Discretizing')
+  message('Discretizing')
   discretizedModel <- pbapply::pbsapply(seq_len(nrow(tdata)),
                     function(w){
                       td <- tdata[w,]

@@ -14,7 +14,7 @@ symmetricalUncertainty <- function(ctable){
   Hy <- rowEntropy - xlogx(total)
   
   # H(X|Y) = H(XY) - H(Y)
-  # H(X|Y) = xlogx(Xij) - H(Y)
+  # H(X|Y) = sum(xlogx(Xij)) - H(Y)
   # Conditional Entropy H(X|Y)
   EntropyConditionedOnRows <- sum(sapply(ctable, xlogx))
   Hx_y <- EntropyConditionedOnRows - rowEntropy
@@ -65,3 +65,4 @@ entropyConditionedOnRows <- function(ctable){
   Hx_y <- (-1 / total) * (EntropyConditionedOnRows - rowEntropy)
   return(Hx_y)
 }
+

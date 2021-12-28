@@ -9,9 +9,8 @@ shakeSolution <- function(currentSolution,nfeature,shakeNumber){
   s <- length(currentSolution)
   d <- nfeature
   
-  for ( k in shakeNumber){
+  for ( k in seq_len(shakeNumber)){
     j <- sample(seq_len(d),1)
-    
     #______________________
     if(j < length(Sx)){
       Xj <- Sx[j]

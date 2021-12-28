@@ -15,6 +15,8 @@ CfsEvaluator <- function(bestSolution,tddata,dv,label,dl){
   num <- 0
   denome <- 0
   
+  bestSolution <- which(rownames(tddata) %in% bestSolution)
+  
   for(i in bestSolution){
     corr <- correlation(tddata[i,],dv[[i]],label,dl)
     num <- num + corr
