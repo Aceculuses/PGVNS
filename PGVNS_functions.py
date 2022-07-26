@@ -125,6 +125,9 @@ class PGVNS:
     def contingencyTable(self, valueSpace, dvalues, labelSpace, lvalues):
         ctable = [ [ 0 for n in range(len(lvalues))]  for m in range(len(dvalues)) ]
         C = self.getCategory(valueSpace, labelSpace)
+        if set(lvalues) - set(C.keys()) != set():
+            for i in set(lvalues):
+                C[i] = []
         for i in lvalues:
             for j in dvalues:
 #                print(dvalues.index(j))
